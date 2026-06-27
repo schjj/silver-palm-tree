@@ -1,0 +1,19 @@
+{
+  "targets": [
+    {
+      "name": "VulnBank",
+      "domain": "localhost:5000",
+      "in_scope": ["localhost:5000"],
+      "out_of_scope": [],
+      "scan_types": ["recon", "vuln", "js"]
+    }
+  ],
+  "schedule": {
+    "interval_hours": 6,
+    "auto_scan": true
+  },
+  "notifications": {
+    "report_format": "markdown",
+    "save_results": true
+  }
+}
