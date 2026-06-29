@@ -35,6 +35,9 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           HEXSTRIKE_DIR: ${{ github.workspace }}/hexstrike-ai
+          HUNTER_API_KEY: ${{ secrets.HUNTER_API_KEY }}
+          HIBP_API_KEY: ${{ secrets.HIBP_API_KEY }}
+          SHODAN_API_KEY: ${{ secrets.SHODAN_API_KEY }}
         run: python hunter_bot.py
 
       - name: Run SIEM Analysis

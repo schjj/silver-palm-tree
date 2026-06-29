@@ -14,6 +14,7 @@ AI-powered bug bounty hunting toolkit with autonomous scanning.
 | `bb_takeover.py` | Subdomain takeover checker (20+ services) |
 | `bb_hackerone.py` | HackerOne program manager |
 | `kali_bridge.py` | Kali Linux SSH bridge for remote tools |
+| `bb_osint.py` | OSINT — WHOIS, DNS, certs, email harvest, breach check, dorks, Shodan, social |
 | `bb_siem.py` | SIEM — event ingestion, correlation, severity classification, alerting |
 
 ## Usage
@@ -35,6 +36,25 @@ Or via GitHub Actions (every 6 hours). Edit `targets.json` to add your targets.
 auto-sync.bat
 ```
 Watches for file changes and auto-commits to GitHub.
+
+### OSINT
+```bash
+python bb_osint.py <domain> [--all | --whois | --dns | --emails | --breach | --shodan | --social | --github | --google]
+```
+Or from the AI agent:
+```
+bb> !osint example.com
+```
+Runs WHOIS, DNS enumeration, certificate transparency, email harvesting, social media footprint, GitHub/Google dork generators, and optional Shodan/HIBP lookups.
+Saves reports to `results/osint_<domain>_<timestamp>.json` and `reports/osint_<domain>_<timestamp>.md`.
+
+| Env Variable | Purpose |
+|---|---|
+| `HUNTER_API_KEY` | Hunter.io email API (optional) |
+| `HIBP_API_KEY` | HaveIBeenPwned breach API (optional) |
+| `SHODAN_API_KEY` | Shodan host lookup (optional) |
+
+To enable `osint` in automated scans, add `"osint"` to the `scan_types` list in `targets.json`.
 
 ### SIEM
 ```bash

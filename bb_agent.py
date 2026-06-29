@@ -67,6 +67,7 @@ AVAILABLE COMMANDS (prefix with !):
   !labs                   Show PortSwigger lab progress
   !targets                List recon target folders
   !open <url>             Open URL in browser
+  !osint <domain>         OSINT: WHOIS, DNS, certs, emails, dorks, social, Shodan
   !siem                   Run SIEM: ingest findings, show alerts & dashboard
   !help                   Show command reference
   exit                    Quit the agent
@@ -231,6 +232,21 @@ def handle_command(user_input):
     if cmd == "open" and args:
         webbrowser.open(args[0])
         return f"Opened {args[0]}"
+
+    if cmd == "osint" and args:
+        target = args[0]
+        print(Y(f"\nRunning OSINT on {target}..."))
+        try:
+            import bb_osint
+            results = bb_osint.run_osint(target)
+            bb_osint.print_summary(results)
+            subs = results.get("cert_subdomains", [])
+            emails = results.get("emails", [])
+            return (f"OSINT complete for {target}: "
+                    f"{len(subs)} subdomains, {len(emails)} emails. "
+                    f"Reports saved to results/ and reports/")
+        except Exception as e:
+            return f"OSINT error: {e}"
 
     if cmd == "siem":
         try:

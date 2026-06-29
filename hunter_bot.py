@@ -102,6 +102,25 @@ def scan_target(target):
             with open(os.path.join(target_dir, "takeover.txt"), "w") as f:
                 f.write(out)
 
+    if "osint" in scans:
+        log(f"Running OSINT on {domain}...")
+        try:
+            import bb_osint
+            osint_results = bb_osint.run_osint(domain)
+            osint_summary = {
+                "subdomains": len(osint_results.get("cert_subdomains", [])),
+                "emails": osint_results.get("emails", []),
+                "social": [s["url"] for s in osint_results.get("social", [])],
+                "registrar": (osint_results.get("whois") or {}).get("registrar"),
+            }
+            with open(os.path.join(target_dir, "osint.json"), "w") as f:
+                json.dump(osint_summary, f, indent=2, default=str)
+            findings = extract_findings(str(osint_results), "osint")
+            results["findings"].extend(findings)
+            log(f"OSINT done: {osint_summary['subdomains']} subdomains, {len(osint_summary['emails'])} emails", "+")
+        except Exception as e:
+            log(f"OSINT error: {e}", "-")
+
     report = generate_report(results)
     report_path = os.path.join(REPORTS_DIR, f"{safe_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md")
     with open(report_path, "w") as f:
