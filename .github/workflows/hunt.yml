@@ -25,10 +25,16 @@ jobs:
           sudo apt-get install -y nmap
           pip install requests beautifulsoup4 lxml dnspython colorama google-generativeai paramiko
 
+      - name: Clone HexStrike AI
+        run: |
+          git clone --depth=1 https://github.com/0x4m4/hexstrike-ai.git hexstrike-ai
+          pip install flask psutil fastmcp aiohttp
+
       - name: Run Hunter Bot
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          HEXSTRIKE_DIR: ${{ github.workspace }}/hexstrike-ai
         run: python hunter_bot.py
 
       - name: Commit results
