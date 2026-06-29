@@ -28,3 +28,6 @@ jobs:
           ollama serve &
           sleep 5
           ollama pull hermes3
+
+      - name: Install OpenClaw
+        run: npm install -g openclaw@latest
