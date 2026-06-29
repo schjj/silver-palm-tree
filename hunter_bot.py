@@ -68,7 +68,7 @@ def scan_target(target):
 
     if "recon" in scans:
         log(f"Running recon on {domain}...")
-        out = run_script("bb_recon.py", [domain, "--no-scan"])
+        out = run_script("bb_recon.py", [domain])
         with open(os.path.join(target_dir, "recon.txt"), "w") as f:
             f.write(out)
         findings = extract_findings(out, "recon")

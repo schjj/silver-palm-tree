@@ -1,9 +1,9 @@
-import json, os, sys, subprocess, socket, ssl, time, re, urllib.request, urllib.error, ssl as ssl_mod
+import json, os, sys, subprocess, socket, ssl, time, re, shutil, urllib.request, urllib.error, ssl as ssl_mod
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from urllib.parse import urlparse
 
-NMAP = os.path.expanduser("~\\Desktop\\NmapPortable\\nmap.exe")
+NMAP = shutil.which("nmap") or os.path.expanduser("~\\Desktop\\NmapPortable\\nmap.exe")
 BB_DIR = os.path.dirname(os.path.abspath(__file__))
 TARGETS_DIR = os.path.join(BB_DIR, "targets")
 REPORTS_DIR = os.path.join(BB_DIR, "reports")
