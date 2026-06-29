@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get install -y nmap
-          pip install requests beautifulsoup4 lxml dnspython colorama google-generativeai
+          pip install requests beautifulsoup4 lxml dnspython colorama google-generativeai paramiko
 
       - name: Run Hunter Bot
         env:
