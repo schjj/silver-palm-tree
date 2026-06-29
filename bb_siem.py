@@ -1,4 +1,4 @@
-import json, os, sys, re, glob, urllib.request
+import json, os, sys, re, glob, urllib.request, hashlib
 from datetime import datetime
 
 BB_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -56,8 +56,9 @@ def classify_severity(event_type, detail=""):
 
 def make_event(source, event_type, detail, target="", severity=None, raw=None):
     sev = severity or classify_severity(event_type, detail)
+    detail_hash = hashlib.sha256(detail.encode("utf-8", errors="replace")).hexdigest()[:8]
     return {
-        "id": f"{int(datetime.now().timestamp() * 1000)}-{abs(hash(detail)) % 10000}",
+        "id": f"{int(datetime.now().timestamp() * 1000)}-{detail_hash}",
         "timestamp": datetime.now().isoformat(),
         "source": source,
         "type": event_type,
