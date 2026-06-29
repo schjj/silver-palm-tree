@@ -3,9 +3,8 @@ from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from urllib.parse import urlparse
 
-PY = r"C:\Users\salva\AppData\Local\Programs\Python\Python312\python.exe"
 NMAP = os.path.expanduser("~\\Desktop\\NmapPortable\\nmap.exe")
-BB_DIR = os.path.expanduser("~\\Desktop\\BugBounty")
+BB_DIR = os.path.dirname(os.path.abspath(__file__))
 TARGETS_DIR = os.path.join(BB_DIR, "targets")
 REPORTS_DIR = os.path.join(BB_DIR, "reports")
 

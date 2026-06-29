@@ -2,7 +2,8 @@ import json, os, re, sys, urllib.request, urllib.parse, urllib.error, ssl as ssl
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-BB_DIR = os.path.expanduser("~\\Desktop\\BugBounty")
+BB_DIR = os.path.dirname(os.path.abspath(__file__))
+os.makedirs(os.path.join(BB_DIR, "reports"), exist_ok=True)
 SSL_CTX = ssl_mod.create_default_context()
 SSL_CTX.check_hostname = False
 SSL_CTX.verify_mode = ssl_mod.CERT_NONE

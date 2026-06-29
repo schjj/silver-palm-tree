@@ -76,10 +76,7 @@ def scan_target(target):
         log(f"Recon done: {len(findings)} findings")
 
     if "vuln" in scans:
-        urls_file = os.path.join(
-            os.path.expanduser("~\\Desktop\\BugBounty\\targets"),
-            safe_name, "all_urls.txt"
-        )
+        urls_file = os.path.join(BB_DIR, "targets", safe_name, "all_urls.txt")
         if os.path.exists(urls_file):
             log(f"Running vuln scan on {domain}...")
             out = run_script("bb_vulnscan.py", [urls_file], timeout=180)
@@ -91,10 +88,7 @@ def scan_target(target):
 
     if "js" in scans:
         log(f"Running JS leak scan...")
-        urls_file = os.path.join(
-            os.path.expanduser("~\\Desktop\\BugBounty\\targets"),
-            safe_name, "all_urls.txt"
-        )
+        urls_file = os.path.join(BB_DIR, "targets", safe_name, "all_urls.txt")
         if os.path.exists(urls_file):
             out = run_script("bb_jsleak.py", [urls_file], timeout=120)
             with open(os.path.join(target_dir, "js_leaks.txt"), "w") as f:
@@ -102,10 +96,7 @@ def scan_target(target):
 
     if "takeover" in scans:
         log(f"Running takeover check...")
-        subs_file = os.path.join(
-            os.path.expanduser("~\\Desktop\\BugBounty\\targets"),
-            safe_name, "subdomains.txt"
-        )
+        subs_file = os.path.join(BB_DIR, "targets", safe_name, "subdomains.txt")
         if os.path.exists(subs_file):
             out = run_script("bb_takeover.py", [subs_file], timeout=120)
             with open(os.path.join(target_dir, "takeover.txt"), "w") as f:
