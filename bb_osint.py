@@ -117,7 +117,8 @@ def whois_lookup(domain):
                 result["registrant"] = name
         log(f"WHOIS (RDAP): {domain} — registrar={result['registrar']} created={result['created']}")
     else:
-        # Fallback: plain whois via who.is API
+        # Fallback: whoisxmlapi.com best-effort (may require an API key for reliable use;
+        # unauthenticated requests are rate-limited and may return empty results).
         api_url = f"https://www.whoisxmlapi.com/whoisserver/WhoisService?domainName={urllib.parse.quote(domain)}&outputFormat=json"
         body, _ = _get(api_url)
         if body:
@@ -401,10 +402,10 @@ def social_footprint(handle):
 
     def check(platform, url):
         body, status = _get(url, timeout=8)
-        if status in (200, 301, 302) and body:
-            # Simple sanity: page should mention the handle
-            if handle.lower() in (body or "").lower():
-                return {"platform": platform, "url": url, "status": status}
+        # Only count status 200 as a confirmed hit; redirects (301/302) often
+        # point to "user not found" pages and produce false positives.
+        if status == 200 and body and handle.lower() in body.lower():
+            return {"platform": platform, "url": url, "status": status}
         return None
 
     checks = []
