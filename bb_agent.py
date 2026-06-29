@@ -67,6 +67,7 @@ AVAILABLE COMMANDS (prefix with !):
   !labs                   Show PortSwigger lab progress
   !targets                List recon target folders
   !open <url>             Open URL in browser
+  !siem                   Run SIEM: ingest findings, show alerts & dashboard
   !help                   Show command reference
   exit                    Quit the agent
 
@@ -230,6 +231,14 @@ def handle_command(user_input):
     if cmd == "open" and args:
         webbrowser.open(args[0])
         return f"Opened {args[0]}"
+
+    if cmd == "siem":
+        try:
+            import bb_siem
+            events, alerts = bb_siem.run_siem(verbose=False)
+            return bb_siem.dashboard(events, alerts)
+        except Exception as e:
+            return f"SIEM error: {e}"
 
     if cmd == "lab" and args:
         cat = args[0].lower()

@@ -191,3 +191,15 @@ if __name__ == "__main__":
 
     auto_commit()
     log("Hunter Bot run complete", "+")
+
+    # Run SIEM analysis on accumulated results
+    try:
+        import bb_siem
+        log("Running SIEM analysis on scan results...", "!")
+        events, alerts = bb_siem.run_siem(
+            webhook_url=os.environ.get("SIEM_WEBHOOK_URL", ""),
+            verbose=True,
+        )
+        log(f"SIEM: {len(events)} events, {len(alerts)} alerts", "+")
+    except Exception as e:
+        log(f"SIEM analysis skipped: {e}", "-")

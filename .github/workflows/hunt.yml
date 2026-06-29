@@ -37,6 +37,11 @@ jobs:
           HEXSTRIKE_DIR: ${{ github.workspace }}/hexstrike-ai
         run: python hunter_bot.py
 
+      - name: Run SIEM Analysis
+        env:
+          SIEM_WEBHOOK_URL: ${{ secrets.SIEM_WEBHOOK_URL }}
+        run: python bb_siem.py --verbose
+
       - name: Commit results
         run: |
           git config user.name "Hunter Bot"
