@@ -17,6 +17,7 @@ def B(text): return clr("36", text)
 def M(text): return clr("35", text)
 
 gk = os.environ.get("GROQ_API_KEY", "")
+gemini_key = os.environ.get("GEMINI_API_KEY", "")
 
 portswigger_labs = {
     "sql": {"name": "SQL Injection", "total": 30, "done": 0, "labs": []},
@@ -131,28 +132,52 @@ def find_category(text):
 
 def call_llm(messages):
     import urllib.request as ureq
-    data = json.dumps({
-        "model": "llama-3.3-70b-versatile",
-        "messages": messages,
-        "temperature": 0.7,
-        "max_tokens": 800
-    }).encode()
-    req = ureq.Request(
-        "https://api.groq.com/openai/v1/chat/completions",
-        data=data,
-        headers={"Authorization": f"Bearer {gk}", "Content-Type": "application/json"}
-    )
-    try:
-        with ureq.urlopen(req, timeout=30) as resp:
-            return json.loads(resp.read())["choices"][0]["message"]["content"]
-    except Exception as e:
+
+    # --- Gemini (primary) ---
+    if gemini_key:
         try:
-            data = json.dumps({"model": "qwen2.5:1.5b", "messages": messages, "stream": False}).encode()
-            req = ureq.Request("http://localhost:11434/api/chat", data=data, headers={"Content-Type": "application/json"})
-            with ureq.urlopen(req, timeout=60) as resp:
-                return json.loads(resp.read())["message"]["content"]
-        except Exception as e2:
-            return f"(LLM unavailable: {e2})"
+            import google.generativeai as genai
+            genai.configure(api_key=gemini_key)
+            system = next((m["content"] for m in messages if m["role"] == "system"), None)
+            model = genai.GenerativeModel(model_name="gemini-1.5-flash", system_instruction=system)
+            history = [
+                {"role": "user" if m["role"] == "user" else "model", "parts": [m["content"]]}
+                for m in messages if m["role"] != "system"
+            ]
+            if not history:
+                return "(no message to send)"
+            chat = model.start_chat(history=history[:-1])
+            return chat.send_message(history[-1]["parts"][0]).text
+        except Exception:
+            pass  # fall through to Groq
+
+    # --- Groq (fallback) ---
+    if gk:
+        try:
+            data = json.dumps({
+                "model": "llama-3.3-70b-versatile",
+                "messages": messages,
+                "temperature": 0.7,
+                "max_tokens": 800
+            }).encode()
+            req = ureq.Request(
+                "https://api.groq.com/openai/v1/chat/completions",
+                data=data,
+                headers={"Authorization": "Bearer " + gk, "Content-Type": "application/json"}
+            )
+            with ureq.urlopen(req, timeout=30) as resp:
+                return json.loads(resp.read())["choices"][0]["message"]["content"]
+        except Exception:
+            pass
+
+    # --- Ollama (local fallback) ---
+    try:
+        data = json.dumps({"model": "qwen2.5:1.5b", "messages": messages, "stream": False}).encode()
+        req = ureq.Request("http://localhost:11434/api/chat", data=data, headers={"Content-Type": "application/json"})
+        with ureq.urlopen(req, timeout=60) as resp:
+            return json.loads(resp.read())["message"]["content"]
+    except Exception as e:
+        return f"(LLM unavailable: {e})"
 
 def handle_command(user_input):
     parts = user_input[1:].strip().split(None, 1)
