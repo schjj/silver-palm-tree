@@ -19,3 +19,12 @@ jobs:
     steps:
       - name: Install sudo
         run: apt-get install -y sudo
+
+      - name: Install Ollama
+        run: curl -fsSL https://ollama.com/install.sh | sh
+
+      - name: Start Ollama and pull Hermes agent
+        run: |
+          ollama serve &
+          sleep 5
+          ollama pull hermes3
