@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get install -y nmap
-          pip install requests beautifulsoup4 lxml dnspython colorama google-generativeai paramiko
+          pip install requests beautifulsoup4 lxml dnspython colorama google-generativeai paramiko anthropic
 
       - name: Clone HexStrike AI
         run: |
@@ -34,6 +34,7 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           HEXSTRIKE_DIR: ${{ github.workspace }}/hexstrike-ai
           HUNTER_API_KEY: ${{ secrets.HUNTER_API_KEY }}
           HIBP_API_KEY: ${{ secrets.HIBP_API_KEY }}

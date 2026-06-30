@@ -18,6 +18,7 @@ def M(text): return clr("35", text)
 
 gk = os.environ.get("GROQ_API_KEY", "")
 gemini_key = os.environ.get("GEMINI_API_KEY", "")
+claude_key = os.environ.get("ANTHROPIC_API_KEY", "")
 
 portswigger_labs = {
     "sql": {"name": "SQL Injection", "total": 30, "done": 0, "labs": []},
@@ -135,7 +136,22 @@ def find_category(text):
 def call_llm(messages):
     import urllib.request as ureq
 
-    # --- Gemini (primary) ---
+    # --- Claude (primary) ---
+    if claude_key:
+        try:
+            import anthropic
+            client = anthropic.Anthropic(api_key=claude_key)
+            system = next((m["content"] for m in messages if m["role"] == "system"), None)
+            history = [m for m in messages if m["role"] != "system"]
+            kwargs = {"model": "claude-opus-4-5", "max_tokens": 1024, "messages": history}
+            if system:
+                kwargs["system"] = system
+            resp = client.messages.create(**kwargs)
+            return resp.content[0].text
+        except Exception:
+            pass  # fall through to Gemini
+
+    # --- Gemini (secondary) ---
     if gemini_key:
         try:
             import google.generativeai as genai
