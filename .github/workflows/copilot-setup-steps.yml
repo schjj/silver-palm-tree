@@ -31,3 +31,8 @@ jobs:
 
       - name: Install OpenClaw
         run: npm install -g openclaw@latest
+
+      - name: Install SentinelOctopus
+        run: |
+          git clone --depth=1 https://github.com/sentineloctopus/sentineloctopus.git /opt/sentineloctopus
+          pip install -r /opt/sentineloctopus/requirements.txt
